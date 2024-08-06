@@ -59,7 +59,12 @@ make_vsn(_Dir) ->
 needs_update(Dir, {path, Path, _}) ->
   needs_update_(Dir, {path, Path});
 needs_update(AppInfo, _) ->
-  needs_update_(rebar_app_info:dir(AppInfo), rebar_app_info:source(AppInfo)).
+  case rebar_app_info:source(AppInfo) of
+    {path, Path} ->
+      needs_update_(rebar_app_info:dir(AppInfo), {path, Path});
+    {path, Path, _} ->
+      needs_update_(rebar_app_info:dir(AppInfo), {path, Path})
+  end.
 
 needs_update_(Dir, {path, Path}) ->
   {ok, Cwd} = file:get_cwd(),
